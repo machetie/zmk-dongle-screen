@@ -36,6 +36,11 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 lv_style_t global_style;
 
+static void bg_opacity_anim_cb(void *var, int32_t value)
+{
+    lv_obj_set_style_bg_opa(var, value, 0);
+}
+
 lv_obj_t *zmk_display_status_screen()
 {
     lv_obj_t *screen;
@@ -43,6 +48,26 @@ lv_obj_t *zmk_display_status_screen()
     screen = lv_obj_create(NULL);
     lv_obj_set_style_bg_color(screen, lv_color_hex(0x000000), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(screen, 255, LV_PART_MAIN);
+
+    // Animated background layer
+    lv_obj_t *bg_layer = lv_obj_create(screen);
+    lv_obj_set_size(bg_layer, 240, 135);
+    lv_obj_set_style_bg_color(bg_layer, lv_color_hex(0x001a4d), 0);
+    lv_obj_set_style_bg_opa(bg_layer, 50, 0);
+    lv_obj_clear_flag(bg_layer, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_border_width(bg_layer, 0, 0);
+    lv_obj_align(bg_layer, LV_ALIGN_CENTER, 0, 0);
+
+    // Breathing animation
+    lv_anim_t a;
+    lv_anim_init(&a);
+    lv_anim_set_var(&a, bg_layer);
+    lv_anim_set_values(&a, 30, 80);
+    lv_anim_set_time(&a, 4000);
+    lv_anim_set_exec_cb(&a, bg_opacity_anim_cb);
+    lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);
+    lv_anim_set_playback_time(&a, 4000);
+    lv_anim_start(&a);
 
     lv_style_init(&global_style);
     // lv_style_set_text_font(&global_style, &lv_font_unscii_8); // ToDo: Font is not recognized
