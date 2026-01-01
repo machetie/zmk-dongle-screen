@@ -36,7 +36,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 lv_style_t global_style;
 
-#define PARTICLE_COUNT 30
+#define PARTICLE_COUNT 15
 #define CANVAS_WIDTH 240
 #define CANVAS_HEIGHT 135
 
@@ -50,7 +50,8 @@ struct particle {
 
 static struct particle particles[PARTICLE_COUNT];
 static lv_obj_t *particle_canvas;
-static lv_color_t canvas_buf[CANVAS_WIDTH * CANVAS_HEIGHT];
+// Use reduced buffer - draw directly on smaller regions
+static lv_color_t canvas_buf[120 * 68];
 static struct k_timer particle_timer;
 
 static int pseudo_rand(void) {
@@ -95,8 +96,8 @@ static void draw_particles(void) {
     lv_draw_rect_dsc_init(&rect_dsc);
     
     for (int i = 0; i < PARTICLE_COUNT; i++) {
-        int x = (int)particles[i].x;
-        int y = (int)particles[i].y;
+        int x = (int)(particles[i].x / 2);
+        int y = (int)(particles[i].y / 2);
         uint8_t bright = particles[i].brightness;
         
         lv_color_t color;
@@ -133,9 +134,10 @@ lv_obj_t *zmk_display_status_screen()
     lv_obj_set_style_bg_color(screen, lv_color_hex(0x0a0a2e), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(screen, 255, LV_PART_MAIN);
 
-    // Canvas for particle field
+    // Canvas for particle field - half resolution to save RAM
     particle_canvas = lv_canvas_create(screen);
-    lv_canvas_set_buffer(particle_canvas, canvas_buf, CANVAS_WIDTH, CANVAS_HEIGHT, LV_IMG_CF_TRUE_COLOR);
+    lv_canvas_set_buffer(particle_canvas, canvas_buf, 120, 68, LV_IMG_CF_TRUE_COLOR);
+    lv_obj_set_size(particle_canvas, 240, 135);
     lv_obj_align(particle_canvas, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_style_border_width(particle_canvas, 0, 0);
     lv_obj_set_style_pad_all(particle_canvas, 0, 0);
