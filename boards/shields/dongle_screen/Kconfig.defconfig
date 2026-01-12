@@ -215,3 +215,8 @@ config DONGLE_SCREEN_SYSTEM_ICON
         The icon to display when the 'LGUI'/'RGUI' is pressed. Can be used to better match the Mod Widget to the underlying system.
         (0: macOS, 1: Linux, 2: Windows)
 endif
+config DONGLE_SCREEN_BONGO_CAT
+    bool "Bongo Cat"
+    default n
+    help
+        Show Bongo Cat widget (animates based on WPM)
