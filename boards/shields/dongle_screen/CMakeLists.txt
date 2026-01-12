@@ -21,5 +21,5 @@ if(CONFIG_SHIELD_DONGLE_SCREEN)
   if(CONFIG_DONGLE_SCREEN_BONGO_CAT)
     zephyr_library_sources(src/widgets/bongo_cat_images.c)
     zephyr_library_sources(src/widgets/bongo_cat.c)
-  
+  endif()
 endif()
