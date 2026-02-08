@@ -59,10 +59,6 @@ lv_obj_t *zmk_display_status_screen()
     lv_style_set_text_line_space(&global_style, 1);
     lv_obj_add_style(screen, &global_style, LV_PART_MAIN);
 
-    lv_obj_t *logo = lv_image_create(screen);
-    lv_image_set_src(logo, &logo_img);
-    lv_obj_align(logo, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
-
 #if CONFIG_DONGLE_SCREEN_LAYER_ACTIVE
 #if CONFIG_DONGLE_SCREEN_LAYER_ROLLER
     zmk_widget_layer_roller_init(&layer_roller_widget, screen);
@@ -73,6 +69,10 @@ lv_obj_t *zmk_display_status_screen()
     lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_CENTER, 0, 0);
 #endif
 #endif
+
+    lv_obj_t *logo = lv_image_create(screen);
+    lv_image_set_src(logo, &logo_img);
+    lv_obj_align(logo, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
 
 #if CONFIG_DONGLE_SCREEN_BONGO_CAT
     zmk_widget_bongo_cat_init(&bongo_cat_widget, screen);
