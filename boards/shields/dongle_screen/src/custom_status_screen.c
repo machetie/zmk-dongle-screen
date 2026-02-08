@@ -39,11 +39,12 @@ static struct zmk_widget_wpm_status wpm_status_widget;
 static struct zmk_widget_mod_status mod_widget;
 #endif
 
+extern const lv_image_dsc_t logo_img;
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 lv_style_t global_style;
-
 lv_obj_t *zmk_display_status_screen()
 {
     lv_obj_t *screen;
@@ -91,6 +92,10 @@ lv_obj_t *zmk_display_status_screen()
     zmk_widget_mod_status_init(&mod_widget, screen);
     lv_obj_align(zmk_widget_mod_status_obj(&mod_widget), LV_ALIGN_CENTER, 0, 35);
 #endif
+
+    lv_obj_t *logo = lv_image_create(screen);
+    lv_image_set_src(logo, &logo_img);
+    lv_obj_align(logo, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
 
     return screen;
 }
