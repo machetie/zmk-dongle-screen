@@ -59,6 +59,10 @@ lv_obj_t *zmk_display_status_screen()
     lv_style_set_text_line_space(&global_style, 1);
     lv_obj_add_style(screen, &global_style, LV_PART_MAIN);
 
+    lv_obj_t *logo = lv_image_create(screen);
+    lv_image_set_src(logo, &logo_img);
+    lv_obj_align(logo, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
+
 #if CONFIG_DONGLE_SCREEN_LAYER_ACTIVE
 #if CONFIG_DONGLE_SCREEN_LAYER_ROLLER
     zmk_widget_layer_roller_init(&layer_roller_widget, screen);
@@ -70,26 +74,22 @@ lv_obj_t *zmk_display_status_screen()
 #endif
 #endif
 
-#if CONFIG_DONGLE_SCREEN_OUTPUT_ACTIVE
-    zmk_widget_output_status_init(&output_status_widget, screen);
-    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_MID, 0, 10);
-#endif
-
-    lv_obj_t *logo = lv_image_create(screen);
-    lv_image_set_src(logo, &logo_img);
-    lv_obj_align(logo, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
-
-#if CONFIG_DONGLE_SCREEN_BATTERY_ACTIVE
-    zmk_widget_dongle_battery_status_init(&dongle_battery_status_widget, screen);
-    lv_obj_align(zmk_widget_dongle_battery_status_obj(&dongle_battery_status_widget), LV_ALIGN_BOTTOM_MID, 0, 0);
-#endif
-
 #if CONFIG_DONGLE_SCREEN_BONGO_CAT
     zmk_widget_bongo_cat_init(&bongo_cat_widget, screen);
     lv_obj_align(zmk_widget_bongo_cat_obj(&bongo_cat_widget), LV_ALIGN_TOP_LEFT, 0, 0);
 #elif CONFIG_DONGLE_SCREEN_WPM_ACTIVE
     zmk_widget_wpm_status_init(&wpm_status_widget, screen);
     lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_TOP_LEFT, 20, 20);
+#endif
+
+#if CONFIG_DONGLE_SCREEN_OUTPUT_ACTIVE
+    zmk_widget_output_status_init(&output_status_widget, screen);
+    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_MID, 0, 10);
+#endif
+
+#if CONFIG_DONGLE_SCREEN_BATTERY_ACTIVE
+    zmk_widget_dongle_battery_status_init(&dongle_battery_status_widget, screen);
+    lv_obj_align(zmk_widget_dongle_battery_status_obj(&dongle_battery_status_widget), LV_ALIGN_BOTTOM_MID, 0, 0);
 #endif
 
 #if CONFIG_DONGLE_SCREEN_MODIFIER_ACTIVE
