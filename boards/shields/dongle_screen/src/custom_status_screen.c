@@ -75,6 +75,10 @@ lv_obj_t *zmk_display_status_screen()
     lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_MID, 0, 10);
 #endif
 
+    lv_obj_t *logo = lv_image_create(screen);
+    lv_image_set_src(logo, &logo_img);
+    lv_obj_align(logo, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
+
 #if CONFIG_DONGLE_SCREEN_BATTERY_ACTIVE
     zmk_widget_dongle_battery_status_init(&dongle_battery_status_widget, screen);
     lv_obj_align(zmk_widget_dongle_battery_status_obj(&dongle_battery_status_widget), LV_ALIGN_BOTTOM_MID, 0, 0);
@@ -92,10 +96,6 @@ lv_obj_t *zmk_display_status_screen()
     zmk_widget_mod_status_init(&mod_widget, screen);
     lv_obj_align(zmk_widget_mod_status_obj(&mod_widget), LV_ALIGN_CENTER, 0, 35);
 #endif
-
-    lv_obj_t *logo = lv_image_create(screen);
-    lv_image_set_src(logo, &logo_img);
-    lv_obj_align(logo, LV_ALIGN_BOTTOM_RIGHT, -8, -8);
 
     return screen;
 }
