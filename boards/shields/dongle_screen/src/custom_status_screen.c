@@ -12,8 +12,13 @@ static struct zmk_widget_output_status output_status_widget;
 #endif
 
 #if CONFIG_DONGLE_SCREEN_LAYER_ACTIVE
+#if CONFIG_DONGLE_SCREEN_LAYER_ROLLER
+#include "widgets/layer_roller.h"
+static struct zmk_widget_layer_roller layer_roller_widget;
+#else
 #include "widgets/layer_status.h"
 static struct zmk_widget_layer_status layer_status_widget;
+#endif
 #endif
 
 #if CONFIG_DONGLE_SCREEN_BATTERY_ACTIVE
@@ -72,8 +77,14 @@ lv_obj_t *zmk_display_status_screen()
 #endif
 
 #if CONFIG_DONGLE_SCREEN_LAYER_ACTIVE
+#if CONFIG_DONGLE_SCREEN_LAYER_ROLLER
+    zmk_widget_layer_roller_init(&layer_roller_widget, screen);
+    lv_obj_set_size(zmk_widget_layer_roller_obj(&layer_roller_widget), 224, 140);
+    lv_obj_align(zmk_widget_layer_roller_obj(&layer_roller_widget), LV_ALIGN_LEFT_MID, 0, -20);
+#else
     zmk_widget_layer_status_init(&layer_status_widget, screen);
     lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_CENTER, 0, 0);
+#endif
 #endif
 
 #if CONFIG_DONGLE_SCREEN_MODIFIER_ACTIVE

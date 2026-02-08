@@ -155,6 +155,20 @@ config DONGLE_SCREEN_LAYER_ACTIVE
     help
       If the Layer Widget should be active or not
 
+config DONGLE_SCREEN_LAYER_ROLLER
+    bool "Use Layer Roller widget instead of simple label"
+    default n
+    select LV_USE_ROLLER
+    help
+      If enabled, uses an animated roller widget for layer display (Prospector style)
+
+config DONGLE_SCREEN_LAYER_ROLLER_ALL_CAPS
+    bool "Display layer names in all caps"
+    default n
+    depends on DONGLE_SCREEN_LAYER_ROLLER
+    help
+      If enabled, layer names will be displayed in uppercase
+
 config DONGLE_SCREEN_OUTPUT_ACTIVE
     bool "Output Widget active"
     default y
