@@ -1,15 +1,25 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zmk/hid.h>
+#include <zmk/display.h>
 #include <lvgl.h>
 #include "mod_status.h"
 #include <fonts.h> // <-- Wichtig für LV_FONT_DECLARE
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+static struct zmk_widget_mod_status *mod_status_widget;
+/* Last rendered modifier byte; -1 forces the first render after init. */
+static int last_mods = -1;
+
 static void update_mod_status(struct zmk_widget_mod_status *widget)
 {
     uint8_t mods = zmk_hid_get_keyboard_report()->body.modifiers;
+
+    if (mods == last_mods)
+        return;
+    last_mods = mods;
+
     char text[32] = "";
     int idx = 0;
 
@@ -43,10 +53,21 @@ static void update_mod_status(struct zmk_widget_mod_status *widget)
     lv_label_set_text(widget->label, idx ? text : "");
 }
 
+/* Runs on the display work queue, the only context allowed to call LVGL. */
+static void mod_status_work_cb(struct k_work *work)
+{
+    ARG_UNUSED(work);
+    if (mod_status_widget)
+        update_mod_status(mod_status_widget);
+}
+
+static K_WORK_DEFINE(mod_status_work, mod_status_work_cb);
+
+/* Timer expiry runs in ISR context: only defer to the display work queue. */
 static void mod_status_timer_cb(struct k_timer *timer)
 {
-    struct zmk_widget_mod_status *widget = k_timer_user_data_get(timer);
-    update_mod_status(widget);
+    ARG_UNUSED(timer);
+    k_work_submit_to_queue(zmk_display_work_q(), &mod_status_work);
 }
 
 static struct k_timer mod_status_timer;
@@ -61,8 +82,10 @@ int zmk_widget_mod_status_init(struct zmk_widget_mod_status *widget, lv_obj_t *p
     lv_label_set_text(widget->label, "-");
     lv_obj_set_style_text_font(widget->label, &NerdFonts_Regular_40, 0); // <-- NerdFont setzen
 
+    mod_status_widget = widget;
+    last_mods = -1;
+
     k_timer_init(&mod_status_timer, mod_status_timer_cb, NULL);
-    k_timer_user_data_set(&mod_status_timer, widget);
     k_timer_start(&mod_status_timer, K_MSEC(100), K_MSEC(100));
 
     return 0;
